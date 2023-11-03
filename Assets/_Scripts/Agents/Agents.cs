@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Agent : MonoBehaviour
+public class Agents : MonoBehaviour
 {
     private GridPosition _gridPosition;
 

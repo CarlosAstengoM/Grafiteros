@@ -3,33 +3,33 @@ public class GridObject
 {
     private GridSystem<GridObject> _parentGrid;
     private GridPosition _gridPosition;
-    private Agent _agent;
+    private Agents _agents;
 
-    public GridObject(GridSystem<GridObject> parentGrid, GridPosition gridPosition, Agent agent = null)
+    public GridObject(GridSystem<GridObject> parentGrid, GridPosition gridPosition, Agents agents = null)
     {
         _parentGrid = parentGrid;
         _gridPosition = gridPosition;
-        _agent = agent;
+        _agents = agents;
     }
 
-    public void SetUnit(Agent agent)
+    public void SetUnit(Agents agents)
     {
-        _agent = agent;
+        _agents = agents;
     }
 
-    public Agent GetUnit()
+    public Agents GetUnit()
     {
-        return _agent;
+        return _agents;
     }
 
     public bool HasUnit()
     {
-        return _agent != null;
+        return _agents != null;
     }
 
     public override string ToString()
     {
-        string hasUnit = _agent != null ? "Has Unit" : "";
+        string hasUnit = _agents != null ? "Has Unit" : "";
         return _gridPosition.ToString() + "\n" + hasUnit;
     }
 }

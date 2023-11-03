@@ -28,13 +28,13 @@ public class LevelGrid : MonoBehaviour
         _gridSystem.CreateDebugObjects(_prefab);
     }
 
-    public void SetUnitAtGridPosition(GridPosition gridPosition, Agent agent)
+    public void SetUnitAtGridPosition(GridPosition gridPosition, Agents agents)
     {
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
-        gridObject.SetUnit(agent);
+        gridObject.SetUnit(agents);
     }
 
-    public Agent GetUnitAtGridPosition(GridPosition gridPosition)
+    public Agents GetUnitAtGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
         return gridObject.GetUnit();
@@ -46,10 +46,10 @@ public class LevelGrid : MonoBehaviour
         gridObject.SetUnit(null);
     }
 
-    public void UpdateUnitGridPosition(Agent agent, GridPosition previousPosition, GridPosition newPosition)
+    public void UpdateUnitGridPosition(Agents agents, GridPosition previousPosition, GridPosition newPosition)
     {
         ClearUnitAtGridPosition(previousPosition);
-        SetUnitAtGridPosition(newPosition,agent);
+        SetUnitAtGridPosition(newPosition,agents);
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition) => _gridSystem.GetGridPosition(worldPosition);
