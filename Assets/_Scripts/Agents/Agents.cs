@@ -1,8 +1,18 @@
+using System;
 using UnityEngine;
 
+[RequireComponent(typeof(PlaybackComponent))]
 public class Agents : MonoBehaviour
 {
-    private GridPosition _gridPosition;
+    public Action<ActionType> OnActionStarted;
+    
+    public GridPosition _gridPosition { get; private set; }
+    private PlaybackComponent _playbackComponent;
+
+    private void Awake()
+    {
+        _playbackComponent = GetComponent<PlaybackComponent>();
+    }
 
     private void Start()
     {
@@ -21,8 +31,9 @@ public class Agents : MonoBehaviour
         }
     }
 
-    public GridPosition GetGridPosition()
+    public void ExecuteStep(AgentAction agentAction)
     {
-        return _gridPosition;
+        OnActionStarted?.Invoke(agentAction.Type);
+        _playbackComponent.PlayAction(agentAction);
     }
 }

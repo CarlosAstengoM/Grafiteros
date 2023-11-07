@@ -9,6 +9,8 @@ public class SimulationParameters : MonoBehaviour
     //Amount of time it takes to finish one turn
     public float TurnTime = 5.0f;
 
+    [field: SerializeField] public int MoveEnergyConsumption { get; private set; }
+
     private void Awake()
     {
         if(Instance != null)
