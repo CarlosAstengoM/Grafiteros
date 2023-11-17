@@ -10,6 +10,8 @@ public class SimulationParameters : MonoBehaviour
     public float TurnTime = 5.0f;
 
     [field: SerializeField] public int MoveEnergyConsumption { get; private set; }
+    
+    [field: SerializeField] public string ServerURL { get; private set; }
 
     private void Awake()
     {

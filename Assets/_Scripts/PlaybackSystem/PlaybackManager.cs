@@ -1,6 +1,8 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class PlaybackManager : MonoBehaviour
 {
@@ -8,9 +10,12 @@ public class PlaybackManager : MonoBehaviour
 
     private List<SimulationStep> _stepList = new List<SimulationStep>();
 
-    private int _currentIndex = 0;
-
     private float _simulationTimeStamp;
+    private float _simulationTimeScale;
+    private bool _isPositiveTimeScale = true;
+    
+    private int _currentIndex = 0;
+    private bool _isRunning = false;
 
     private void Awake()
     {
@@ -23,31 +28,28 @@ public class PlaybackManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
-    {
-        List<AgentAction> a = new List<AgentAction>();
-        a.Add(new AgentAction(new GridPosition(0,0),new GridPosition(0,1),ActionType.Move));
-        SimulationStep x = new SimulationStep(a);
-        
-        List<AgentAction> b = new List<AgentAction>();
-        b.Add(new AgentAction(new GridPosition(0,1),new GridPosition(0,2),ActionType.Move));
-        SimulationStep y = new SimulationStep(b);
-
-        _stepList.Add(x);
-        _stepList.Add(y);
-    }
-
     private void Update()
     {
-        if (_currentIndex < _stepList.Count)
+        if(!_isRunning) return;
+        HandleSimulation();
+
+    }
+
+    private void HandleSimulation()
+    {
+        if (_currentIndex < _stepList.Count && _currentIndex >= 0)
         {
-            if (_simulationTimeStamp >= _currentIndex * SimulationParameters.Instance.TurnTime)
+            if (_isPositiveTimeScale && _simulationTimeStamp >= _currentIndex * SimulationParameters.Instance.TurnTime)
             {
-                PlayNextStep();
+                StartCoroutine(GetStep(_currentIndex));
+            }
+            else if(!_isPositiveTimeScale && _simulationTimeStamp < _currentIndex -1 * SimulationParameters.Instance.TurnTime)
+            {
+                PlayPreviousStep();
             }
             else
             {
-                _simulationTimeStamp += Time.deltaTime;
+                _simulationTimeStamp += Time.deltaTime * _simulationTimeScale * (_isPositiveTimeScale ? 1 : -1);
             }
         }
     }
@@ -62,5 +64,86 @@ public class PlaybackManager : MonoBehaviour
             agent.ExecuteStep(action);
         }
         _currentIndex++;
+    }
+    
+    public void PlayPreviousStep()
+    {
+        List<AgentAction> actions = _stepList[_currentIndex-1].Actions;
+
+        foreach (AgentAction action in actions)
+        {
+            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.From);
+            agent.ExecuteStep(action);
+        }
+        _currentIndex--;
+    }
+
+    public void TryStartSimulationPython()
+    {
+        if(_isRunning) return;
+        StartCoroutine(StartSimulationPython());
+    }
+
+    public void ToggleSimulation()
+    {
+        if (_isRunning)
+        {
+            _isRunning = false;
+            Time.timeScale = 0;
+        }
+        else
+        {
+            _isRunning = true;
+            Time.timeScale = 1;
+        }
+
+    }
+
+    public void ChangePlaybackSpeed(float newSpeed)
+    {
+        _simulationTimeScale = newSpeed;
+    }
+    
+    private IEnumerator StartSimulationPython()
+    {
+        string bodyJsonString = "true";
+        var request = new UnityWebRequest(SimulationParameters.Instance.ServerURL, "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
+        
+        request.uploadHandler = (UploadHandler) new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+        
+        yield return request.SendWebRequest();
+        Debug.Log("Status Code: " + request.responseCode);
+        
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            _isRunning = true;
+        }
+        else
+        {
+            Debug.LogError(request.error);
+        }
+    }
+
+    private IEnumerator GetStep(int step)
+    {
+        UnityWebRequest request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "'\'" + step.ToString());
+        
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            string receivedMessage = request.downloadHandler.text;
+            SimulationStep myData = JsonUtility.FromJson<SimulationStep>(receivedMessage);
+
+            _stepList.Add(myData);
+            PlayNextStep();
+        }
+        else
+        {
+            Debug.LogError(request.error);
+        }
     }
 }
