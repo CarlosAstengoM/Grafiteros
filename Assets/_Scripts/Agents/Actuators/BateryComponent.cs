@@ -7,25 +7,28 @@ public class BateryComponent : MonoBehaviour
 {
     [SerializeField] private int _maxCharge;
     private int _currentCharge;
+    private int _lastChargeDelta;
 
     private void Start()
     {
         _currentCharge = _maxCharge;
+        PlaybackManager.Instance.OnReverseToggled += SelectChargeMethod;
     }
 
     private void OnEnable()
     {
         Agents agent = GetComponent<Agents>();
-        agent.OnActionStarted += UseCharge;
+        agent.OnActionStarted += CalculateChargeUsage;
     }
 
     private void OnDisable()
     {
         Agents agent = GetComponent<Agents>();
-        agent.OnActionStarted -= UseCharge;
+        agent.OnActionStarted -= CalculateChargeUsage;
+        PlaybackManager.Instance.OnReverseToggled -= SelectChargeMethod;
     }
 
-    private void UseCharge(ActionType actionType)
+    private void CalculateChargeUsage(ActionType actionType)
     {
         int amount = 0;
         switch (actionType)
@@ -34,8 +37,20 @@ public class BateryComponent : MonoBehaviour
                 amount = SimulationParameters.Instance.MoveEnergyConsumption;
                 break;
         }
-        
-        UseCharge(amount);
+        _lastChargeDelta = amount;
+        SelectChargeMethod();
+    }
+
+    private void SelectChargeMethod()
+    {
+        if (PlaybackManager.Instance.IsPositiveTimeScale)
+        {
+            UseCharge(_lastChargeDelta);
+        }
+        else
+        {
+            ChargeUp(_lastChargeDelta);
+        }
     }
 
     private void UseCharge(int amount)

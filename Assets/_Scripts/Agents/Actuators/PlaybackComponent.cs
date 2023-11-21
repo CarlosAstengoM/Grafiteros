@@ -14,6 +14,13 @@ public class PlaybackComponent : MonoBehaviour
         }
         
         //Check for null actuator meaning it send the wrong order to the wrong agent
-        actuator.ExecuteAction(action.From, action.To);
+        if (PlaybackManager.Instance.IsPositiveTimeScale)
+        {
+            actuator.ExecuteAction(action.From, action.To);
+        }
+        else
+        { 
+            actuator.UndoAction(action.From, action.To);
+        }
     }
 }

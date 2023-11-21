@@ -2,6 +2,7 @@
 //* but this game would use x and z coordinates
 using System;
 
+[System.Serializable]
 public struct GridPosition : IEquatable<GridPosition>
 {
     public int X;

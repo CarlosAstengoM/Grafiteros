@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -8,14 +9,16 @@ public class PlaybackManager : MonoBehaviour
 {
     public static PlaybackManager Instance {get; private set;}
 
+    public Action OnReverseToggled;
+
     private List<SimulationStep> _stepList = new List<SimulationStep>();
 
     private float _simulationTimeStamp;
-    private float _simulationTimeScale;
-    private bool _isPositiveTimeScale = true;
+    public float SimulationTimeScale {get; private set;} = 1.0f;
+    public bool IsPositiveTimeScale {get; private set;} = true;
     
     private int _currentIndex = 0;
-    private bool _isRunning = false;
+    private bool _isRunning = true;
 
     private void Awake()
     {
@@ -28,30 +31,39 @@ public class PlaybackManager : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        for (int i = 1; i < LevelGrid.Instance.GetWidth(); i++)
+        {
+            List<AgentAction> a = new List<AgentAction>();
+            a.Add(new AgentAction(new GridPosition(0,i-1),new GridPosition(0,i),ActionType.Move));
+            SimulationStep x = new SimulationStep(a);
+            _stepList.Add(x);
+        }
+    }
+    
     private void Update()
     {
         if(!_isRunning) return;
         HandleSimulation();
-
     }
 
     private void HandleSimulation()
     {
         if (_currentIndex < _stepList.Count && _currentIndex >= 0)
         {
-            if (_isPositiveTimeScale && _simulationTimeStamp >= _currentIndex * SimulationParameters.Instance.TurnTime)
+            if (IsPositiveTimeScale && _simulationTimeStamp >= _currentIndex * SimulationParameters.Instance.TurnTime)
             {
-                StartCoroutine(GetStep(_currentIndex));
+                PlayNextStep();
+                //StartCoroutine(GetStep(_currentIndex));
             }
-            else if(!_isPositiveTimeScale && _simulationTimeStamp < _currentIndex -1 * SimulationParameters.Instance.TurnTime)
+            else if(!IsPositiveTimeScale && _simulationTimeStamp < _currentIndex * SimulationParameters.Instance.TurnTime)
             {
                 PlayPreviousStep();
             }
-            else
-            {
-                _simulationTimeStamp += Time.deltaTime * _simulationTimeScale * (_isPositiveTimeScale ? 1 : -1);
-            }
         }
+        _simulationTimeStamp += Time.deltaTime * SimulationTimeScale * (IsPositiveTimeScale ? 1 : -1);
+        _simulationTimeStamp = Mathf.Clamp(_simulationTimeStamp, 0.0f, _stepList.Count * SimulationParameters.Instance.TurnTime);
     }
 
     public void PlayNextStep()
@@ -60,6 +72,7 @@ public class PlaybackManager : MonoBehaviour
 
         foreach (AgentAction action in actions)
         {
+            Debug.Log(action.From.ToString() + " " + action.To.ToString());
             Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.From);
             agent.ExecuteStep(action);
         }
@@ -72,7 +85,7 @@ public class PlaybackManager : MonoBehaviour
 
         foreach (AgentAction action in actions)
         {
-            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.From);
+            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.To);
             agent.ExecuteStep(action);
         }
         _currentIndex--;
@@ -84,6 +97,7 @@ public class PlaybackManager : MonoBehaviour
         StartCoroutine(StartSimulationPython());
     }
 
+    [ContextMenu("TogglePlay")]
     public void ToggleSimulation()
     {
         if (_isRunning)
@@ -96,12 +110,33 @@ public class PlaybackManager : MonoBehaviour
             _isRunning = true;
             Time.timeScale = 1;
         }
+    }
 
+    [ContextMenu("TEMP -- REVERSE TIME")]
+    public void ToggleTimeScaleSign()
+    {
+        if (!IsPositiveTimeScale)
+        {
+            IsPositiveTimeScale = true;
+            _currentIndex++;
+        }
+        else
+        {
+            IsPositiveTimeScale = false;
+            _currentIndex--;
+        }
+        OnReverseToggled?.Invoke();
+    }
+    
+    [ContextMenu("TEMP -- INCREASE SPEED")]
+    public void IncreasePlayBackSeed()
+    {
+        ChangePlaybackSpeed(2.0f);
     }
 
     public void ChangePlaybackSpeed(float newSpeed)
     {
-        _simulationTimeScale = newSpeed;
+        SimulationTimeScale = newSpeed;
     }
     
     private IEnumerator StartSimulationPython()

@@ -15,7 +15,7 @@ public class MoveComponent : BaseActuator
         if (remainingDistance > _minDistance)
         {
             Vector3 distance =  _to - _from;
-            Vector3 velocity = distance / SimulationParameters.Instance.TurnTime * Time.deltaTime;
+            Vector3 velocity = distance / SimulationParameters.Instance.TurnTime * (PlaybackManager.Instance.SimulationTimeScale * Time.deltaTime);
             transform.position += velocity;
         }
     }
@@ -24,5 +24,18 @@ public class MoveComponent : BaseActuator
     {
         _from = LevelGrid.Instance.GetWorldPosition(from);
         _to = LevelGrid.Instance.GetWorldPosition(to);
+    }
+
+    public override void UndoAction(GridPosition from, GridPosition to)
+    {
+        _from = LevelGrid.Instance.GetWorldPosition(to);
+        _to = LevelGrid.Instance.GetWorldPosition(from);
+    }
+
+    public override void OnActionReversed()
+    {
+        Vector3 temp = _from;
+        _from = _to;
+        _to = temp;
     }
 }

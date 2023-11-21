@@ -54,7 +54,7 @@ public class CameraController : MonoBehaviour
         }
 
         Vector3 moveVector = transform.forward * inputMoveDir.z + transform.right * inputMoveDir.x;
-        transform.position += moveVector * _moveSpeed * Time.deltaTime;
+        transform.position += moveVector * _moveSpeed * Time.unscaledDeltaTime;
     }
 
     private void HandleRotation()
@@ -69,7 +69,7 @@ public class CameraController : MonoBehaviour
             rotationVector.y -=1f;
         }
 
-        transform.eulerAngles += rotationVector * _rotateSpeed * Time.deltaTime;
+        transform.eulerAngles += rotationVector * _rotateSpeed * Time.unscaledDeltaTime;
     }
 
     private void HandleZoom()
@@ -86,6 +86,6 @@ public class CameraController : MonoBehaviour
         targetFollowOffset.y = Mathf.Clamp(targetFollowOffset.y, _minOffset, _maxOffset);
 
         float zoomSpeed = 5f;
-        cinemachineTransposer.m_FollowOffset = Vector3.Lerp(cinemachineTransposer.m_FollowOffset, targetFollowOffset, Time.deltaTime * zoomSpeed);
+        cinemachineTransposer.m_FollowOffset = Vector3.Lerp(cinemachineTransposer.m_FollowOffset, targetFollowOffset, Time.unscaledDeltaTime * zoomSpeed);
     }
 }
