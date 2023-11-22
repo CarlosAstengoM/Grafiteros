@@ -72,7 +72,6 @@ public class PlaybackManager : MonoBehaviour
 
         foreach (AgentAction action in actions)
         {
-            Debug.Log(action.From.ToString() + " " + action.To.ToString());
             Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.From);
             agent.ExecuteStep(action);
         }
@@ -112,7 +111,7 @@ public class PlaybackManager : MonoBehaviour
         }
     }
 
-    [ContextMenu("TEMP -- REVERSE TIME")]
+    [ContextMenu("Reverse Time")]
     public void ToggleTimeScaleSign()
     {
         if (!IsPositiveTimeScale)
