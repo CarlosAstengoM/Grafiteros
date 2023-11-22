@@ -1,36 +1,37 @@
 //* This struct was created to make math easier since Vector2 uses x and y coordinates
 //* but this game would use x and z coordinates
 using System;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public struct GridPosition : IEquatable<GridPosition>
 {
-    public int X;
-    public int Z;
+    [FormerlySerializedAs("X")] public int x;
+    [FormerlySerializedAs("Z")] public int z;
 
     public GridPosition(int x, int z)
     {
-        X = x;
-        Z = z;
+        this.x = x;
+        this.z = z;
     }
 
     public override string ToString()
     {
-        return $"X: {X} - Z: {Z} ";
+        return $"X: {x} - Z: {z} ";
     }
 
     //* Auto-generated
     public override bool Equals(object obj)
     {
         return obj is GridPosition position &&
-               X == position.X &&
-               Z == position.Z;
+               x == position.x &&
+               z == position.z;
     }
 
     //* Auto-generated
     public override int GetHashCode()
     {
-        return HashCode.Combine(X, Z);
+        return HashCode.Combine(x, z);
     }
 
     public bool Equals(GridPosition other)
@@ -40,7 +41,7 @@ public struct GridPosition : IEquatable<GridPosition>
 
     public static bool operator == (GridPosition a, GridPosition b)
     {
-        return (a.X == b.X) && (a.Z == b.Z);
+        return (a.x == b.x) && (a.z == b.z);
     }
 
     public static bool operator != (GridPosition a, GridPosition b)
@@ -50,11 +51,11 @@ public struct GridPosition : IEquatable<GridPosition>
 
     public static GridPosition operator +(GridPosition a, GridPosition b)
     {
-        return new GridPosition(a.X + b.X, a.Z + b.Z);
+        return new GridPosition(a.x + b.x, a.z + b.z);
     }
 
     public static GridPosition operator -(GridPosition a, GridPosition b)
     {
-        return new GridPosition(a.X - b.X, a.Z - b.Z);
+        return new GridPosition(a.x - b.x, a.z - b.z);
     }
 }

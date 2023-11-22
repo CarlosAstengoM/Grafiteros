@@ -54,7 +54,7 @@ namespace TurnBasedStrategy.Grid
         {
             foreach(GridPosition gridPosition in gridPositions)
             {
-                _gridPositionsDebug[gridPosition.X, gridPosition.Z].Show();
+                _gridPositionsDebug[gridPosition.x, gridPosition.z].Show();
             }
         }
 

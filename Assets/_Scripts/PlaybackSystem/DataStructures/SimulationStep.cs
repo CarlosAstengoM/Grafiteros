@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 [System.Serializable]
-struct SimulationStep
+public class SimulationStep
 {
     public List<AgentAction> Actions;
 

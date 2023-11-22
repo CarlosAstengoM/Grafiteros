@@ -6,9 +6,9 @@ public class PlaybackComponent : MonoBehaviour
     {
         BaseActuator actuator = null;
         
-        switch (action.Type)
+        switch (action.type)
         {
-            case ActionType.Move:
+            case ActionType.MOVE:
                 actuator = GetComponent<MoveComponent>();
                 break;
         }
@@ -16,11 +16,11 @@ public class PlaybackComponent : MonoBehaviour
         //Check for null actuator meaning it send the wrong order to the wrong agent
         if (PlaybackManager.Instance.IsPositiveTimeScale)
         {
-            actuator.ExecuteAction(action.From, action.To);
+            actuator.ExecuteAction(action.from, action.to);
         }
         else
         { 
-            actuator.UndoAction(action.From, action.To);
+            actuator.UndoAction(action.from, action.to);
         }
     }
 }

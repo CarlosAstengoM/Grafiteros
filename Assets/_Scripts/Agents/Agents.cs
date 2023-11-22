@@ -33,7 +33,7 @@ public class Agents : MonoBehaviour
 
     public void ExecuteStep(AgentAction agentAction)
     {
-        OnActionStarted?.Invoke(agentAction.Type);
+        OnActionStarted?.Invoke(agentAction.type);
         _playbackComponent.PlayAction(agentAction);
     }
 }

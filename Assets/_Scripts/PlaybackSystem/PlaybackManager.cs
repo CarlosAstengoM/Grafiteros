@@ -18,7 +18,7 @@ public class PlaybackManager : MonoBehaviour
     public bool IsPositiveTimeScale {get; private set;} = true;
     
     private int _currentIndex = 0;
-    private bool _isRunning = true;
+    private bool _isRunning = false;
 
     private void Awake()
     {
@@ -33,6 +33,7 @@ public class PlaybackManager : MonoBehaviour
 
     private void Start()
     {
+        /*
         for (int i = 1; i < LevelGrid.Instance.GetWidth(); i++)
         {
             List<AgentAction> a = new List<AgentAction>();
@@ -40,6 +41,7 @@ public class PlaybackManager : MonoBehaviour
             SimulationStep x = new SimulationStep(a);
             _stepList.Add(x);
         }
+        */
     }
     
     private void Update()
@@ -50,12 +52,12 @@ public class PlaybackManager : MonoBehaviour
 
     private void HandleSimulation()
     {
-        if (_currentIndex < _stepList.Count && _currentIndex >= 0)
+        if (_currentIndex <= _stepList.Count && _currentIndex >= 0)
         {
             if (IsPositiveTimeScale && _simulationTimeStamp >= _currentIndex * SimulationParameters.Instance.TurnTime)
             {
                 PlayNextStep();
-                //StartCoroutine(GetStep(_currentIndex));
+                StartCoroutine(GetStep(_currentIndex));
             }
             else if(!IsPositiveTimeScale && _simulationTimeStamp < _currentIndex * SimulationParameters.Instance.TurnTime)
             {
@@ -72,7 +74,7 @@ public class PlaybackManager : MonoBehaviour
 
         foreach (AgentAction action in actions)
         {
-            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.From);
+            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.from);
             agent.ExecuteStep(action);
         }
         _currentIndex++;
@@ -84,12 +86,13 @@ public class PlaybackManager : MonoBehaviour
 
         foreach (AgentAction action in actions)
         {
-            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.To);
+            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.to);
             agent.ExecuteStep(action);
         }
         _currentIndex--;
     }
 
+    [ContextMenu("StartSimulation")]
     public void TryStartSimulationPython()
     {
         if(_isRunning) return;
@@ -140,20 +143,43 @@ public class PlaybackManager : MonoBehaviour
     
     private IEnumerator StartSimulationPython()
     {
-        string bodyJsonString = "true";
-        var request = new UnityWebRequest(SimulationParameters.Instance.ServerURL, "POST");
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
-        
-        request.uploadHandler = (UploadHandler) new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        
+        UnityWebRequest request = new UnityWebRequest(SimulationParameters.Instance.ServerURL + "/start-simulation", "Get");
+
         yield return request.SendWebRequest();
-        Debug.Log("Status Code: " + request.responseCode);
-        
+
         if (request.result == UnityWebRequest.Result.Success)
         {
-            _isRunning = true;
+            //Get First One
+            request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (_currentIndex + 1).ToString());
+            yield return request.SendWebRequest();
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string receivedMessage = request.downloadHandler.text;
+                SimulationStep myData = JsonUtility.FromJson<SimulationStep>(receivedMessage);
+
+                _stepList.Add(myData);
+                
+                //Get Second One
+                request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (_currentIndex + 2).ToString());
+                yield return request.SendWebRequest();
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    receivedMessage = request.downloadHandler.text;
+                    myData = JsonUtility.FromJson<SimulationStep>(receivedMessage);
+
+                    _isRunning = true;
+                    _stepList.Add(myData);
+                    PlayNextStep();
+                }
+                else
+                {
+                    Debug.LogError(request.error);
+                }
+            }
+            else
+            {
+                Debug.LogError(request.error);
+            }
         }
         else
         {
@@ -163,8 +189,7 @@ public class PlaybackManager : MonoBehaviour
 
     private IEnumerator GetStep(int step)
     {
-        UnityWebRequest request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "'\'" + step.ToString());
-        
+        UnityWebRequest request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (step + 2).ToString());
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -173,7 +198,6 @@ public class PlaybackManager : MonoBehaviour
             SimulationStep myData = JsonUtility.FromJson<SimulationStep>(receivedMessage);
 
             _stepList.Add(myData);
-            PlayNextStep();
         }
         else
         {

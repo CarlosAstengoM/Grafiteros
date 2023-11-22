@@ -33,7 +33,7 @@ public class BateryComponent : MonoBehaviour
         int amount = 0;
         switch (actionType)
         {
-            case ActionType.Move:
+            case ActionType.MOVE:
                 amount = SimulationParameters.Instance.MoveEnergyConsumption;
                 break;
         }

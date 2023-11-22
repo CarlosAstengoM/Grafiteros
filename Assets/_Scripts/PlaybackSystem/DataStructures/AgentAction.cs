@@ -1,14 +1,16 @@
+using UnityEngine.Serialization;
+
 [System.Serializable]
-public struct AgentAction
+public class AgentAction
 {
-    public GridPosition From;
-    public GridPosition To;
-    public ActionType Type;
+    public GridPosition from;
+    public GridPosition to;
+    public ActionType type;
 
     public AgentAction(GridPosition from, GridPosition to, ActionType type)
     {
-        From = from;
-        To = to;
-        Type = type;
+        this.from = from;
+        this.to = to;
+        this.type = type;
     }
 }

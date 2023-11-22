@@ -1,6 +1,6 @@
 public enum ActionType
 {
-    Move,
-    Pick,
-    Drop
+    MOVE,
+    PICK,
+    DROP
 }  

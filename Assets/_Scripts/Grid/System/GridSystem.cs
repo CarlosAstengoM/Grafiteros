@@ -28,7 +28,7 @@ public class GridSystem<T_GridObject>
 
     public Vector3 GetWorldPosition(GridPosition position)
     {
-        return new Vector3(position.Z,0,position.X*-1) * _cellSize;
+        return new Vector3(position.z,0,position.x*-1) * _cellSize;
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition)
@@ -40,15 +40,15 @@ public class GridSystem<T_GridObject>
 
     public T_GridObject GetGridObject(GridPosition gridPosition)
     {
-        return _gridObjects[gridPosition.X,gridPosition.Z];
+        return _gridObjects[gridPosition.x,gridPosition.z];
     }
 
     public bool IsValidGridPosition(GridPosition gridPosition)
     {
-        return gridPosition.X >= 0 &&
-               gridPosition.Z >= 0 &&
-               gridPosition.X < _width &&
-               gridPosition.Z < _height;
+        return gridPosition.x >= 0 &&
+               gridPosition.z >= 0 &&
+               gridPosition.x < _width &&
+               gridPosition.z < _height;
     }
 
     public int GetWidth()
