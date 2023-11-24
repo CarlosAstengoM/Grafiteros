@@ -57,7 +57,7 @@ public class PlaybackManager : MonoBehaviour
             if (IsPositiveTimeScale && _simulationTimeStamp >= _currentIndex * SimulationParameters.Instance.TurnTime)
             {
                 PlayNextStep();
-                StartCoroutine(GetStep(_currentIndex));
+                StartCoroutine(GetStep(_stepList.Count));
             }
             else if(!IsPositiveTimeScale && _simulationTimeStamp < _currentIndex * SimulationParameters.Instance.TurnTime)
             {
@@ -150,7 +150,7 @@ public class PlaybackManager : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             //Get First One
-            request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (_currentIndex + 1).ToString());
+            request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (1).ToString());
             yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.Success)
             {
@@ -160,7 +160,7 @@ public class PlaybackManager : MonoBehaviour
                 _stepList.Add(myData);
                 
                 //Get Second One
-                request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (_currentIndex + 2).ToString());
+                request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (2).ToString());
                 yield return request.SendWebRequest();
                 if (request.result == UnityWebRequest.Result.Success)
                 {
@@ -189,7 +189,7 @@ public class PlaybackManager : MonoBehaviour
 
     private IEnumerator GetStep(int step)
     {
-        UnityWebRequest request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (step + 2).ToString());
+        UnityWebRequest request = UnityWebRequest.Get(SimulationParameters.Instance.ServerURL + "/simulation-step/" + (step + 1).ToString());
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)

@@ -19,7 +19,6 @@ public class Mouse : MonoBehaviour
     {
         //* Unity now caches camera.main internally
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, s_instance._movableLayerMask);
-        return hit.point;
+        return Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, s_instance._movableLayerMask) ? hit.point : Vector3.one * -1;
     }
 }
