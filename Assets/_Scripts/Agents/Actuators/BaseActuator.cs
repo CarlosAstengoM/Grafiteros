@@ -19,5 +19,4 @@ public abstract class BaseActuator : MonoBehaviour
     public abstract void UndoAction(GridPosition from, GridPosition to);
     
     public abstract void OnActionReversed();
-
 }

@@ -11,6 +11,15 @@ public class PlaybackComponent : MonoBehaviour
             case ActionType.MOVE:
                 actuator = GetComponent<MoveComponent>();
                 break;
+            case ActionType.PICK:
+                actuator = GetComponent<PickupComponent>();
+                break;
+            case ActionType.DROP:
+                actuator = GetComponent<DropComponent>();
+                break;
+            case ActionType.CHARGE:
+                actuator = GetComponent<BateryComponent>();
+                break;
         }
         
         //Check for null actuator meaning it send the wrong order to the wrong agent

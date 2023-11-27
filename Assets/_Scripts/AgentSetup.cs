@@ -9,11 +9,11 @@ using UnityEngine.UI;
 [System.Serializable]
 struct GridPositionList
 {
-    public List<GridPosition> Positions;
+    public List<GridPosition> positions;
 
     public GridPositionList(List<GridPosition> list)
     {
-        Positions = list;
+        positions = list;
     }
 }
 
@@ -52,15 +52,41 @@ public class AgentSetup : MonoBehaviour
 
     public void SendSimulationParameters()
     {
-        StartCoroutine(nameof(SendData));
+        StartCoroutine(nameof(SendParameters));
         _isActive = false;
     }
-    
-    private IEnumerator SendData()
+
+    private IEnumerator SendParameters()
+    {
+        string data = JsonUtility.ToJson(SimulationParameters.Instance.GetParameters());
+        WWWForm form = new WWWForm();
+        form.AddField("bundle", data);
+
+        string url = SimulationParameters.Instance.ServerURL + "/change_params";
+
+        using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(data);
+            www.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+            www.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            www.SetRequestHeader("Content-Type", "application/json");
+
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                yield return SendPositions();
+            }
+            else
+            {
+                Debug.Log(www.error);
+            }
+        }
+    }
+
+    private IEnumerator SendPositions()
     {
         GridPositionList gridPositionList = new GridPositionList(_gridPositions);
         string data = JsonUtility.ToJson(gridPositionList);
-        Debug.Log(data);
         WWWForm form = new WWWForm();
         form.AddField("bundle", data);
         

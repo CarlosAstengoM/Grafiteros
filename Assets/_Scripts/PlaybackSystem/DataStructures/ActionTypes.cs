@@ -1,6 +1,11 @@
+using System;
+
+[Serializable]
 public enum ActionType
 {
     MOVE,
     PICK,
-    DROP
+    DROP,
+    CHARGE,
+    SPAWN
 }  

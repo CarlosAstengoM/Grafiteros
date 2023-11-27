@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BateryComponent : MonoBehaviour
+public class BateryComponent : BaseActuator
 {
     [SerializeField] private int _maxCharge;
     private int _currentCharge;
@@ -28,6 +28,21 @@ public class BateryComponent : MonoBehaviour
         PlaybackManager.Instance.OnReverseToggled -= SelectChargeMethod;
     }
 
+    public override void ExecuteAction(GridPosition from, GridPosition to)
+    {
+        ChargeUp(SimulationParameters.Instance.ChargeUpAmount);
+    }
+
+    public override void UndoAction(GridPosition from, GridPosition to)
+    {
+        UseCharge(SimulationParameters.Instance.ChargeUpAmount);
+    }
+
+    public override void OnActionReversed()
+    {
+        UseCharge(SimulationParameters.Instance.ChargeUpAmount);
+    }
+
     private void CalculateChargeUsage(ActionType actionType)
     {
         int amount = 0;
@@ -35,6 +50,10 @@ public class BateryComponent : MonoBehaviour
         {
             case ActionType.MOVE:
                 amount = SimulationParameters.Instance.MoveEnergyConsumption;
+                break;
+            case ActionType.PICK:
+            case ActionType.DROP:
+                amount = SimulationParameters.Instance.PickDropEnergyConsumption;
                 break;
         }
         _lastChargeDelta = amount;
@@ -65,7 +84,7 @@ public class BateryComponent : MonoBehaviour
     private void ChargeUp(int amount)
     {
         _currentCharge += amount;
-        if (_currentCharge < _maxCharge)
+        if (_currentCharge > _maxCharge)
         {
             _currentCharge = _maxCharge;
         }
