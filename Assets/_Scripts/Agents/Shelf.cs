@@ -15,7 +15,7 @@ public class Shelf : MonoBehaviour
         transform.position = LevelGrid.Instance.GetWorldPosition(gridPosition);
     }
 
-    public void TakeBox(GameObject box, bool updatePosition)
+    public virtual void TakeBox(GameObject box, bool updatePosition)
     {
         stored = box;
         box.transform.parent = null;
@@ -26,7 +26,7 @@ public class Shelf : MonoBehaviour
         }
     }
 
-    public GameObject GiveBox()
+    public virtual GameObject GiveBox()
     {
         GameObject temp = stored;
         stored = null;

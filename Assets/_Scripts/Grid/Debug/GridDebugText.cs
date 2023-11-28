@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using TurnBasedStrategy.Grid;
 
 public class GridDebugText : MonoBehaviour
 {
@@ -13,6 +14,13 @@ public class GridDebugText : MonoBehaviour
 
     protected virtual void Update()
     {
-        _text.text = _gridObject.ToString();
+        if (PlaybackManager.Instance.InDebugMode)
+        {
+            _text.text = _gridObject.ToString();
+        }
+        else
+        {
+            _text.text = "";
+        }
     }
 }

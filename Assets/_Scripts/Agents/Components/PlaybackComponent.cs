@@ -3,16 +3,6 @@ using UnityEngine;
 public class PlaybackComponent : MonoBehaviour
 {
     private AgentAction _currentAction;
-    
-    private void Start()
-    {
-        PlaybackManager.Instance.OnReverseToggled += ReverseAction;
-    }
-
-    private void OnDisable()
-    {
-        PlaybackManager.Instance.OnReverseToggled -= ReverseAction;
-    }
 
     private void ReverseAction()
     {

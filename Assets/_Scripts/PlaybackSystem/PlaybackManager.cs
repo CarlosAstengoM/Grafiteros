@@ -6,12 +6,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using TurnBasedStrategy.Grid;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class PlaybackManager : MonoBehaviour
 {
     public static PlaybackManager Instance {get; private set;}
-
-    public Action OnReverseToggled;
 
     [SerializeField] private List<SimulationStep> _stepList = new List<SimulationStep>();
 
@@ -21,6 +22,7 @@ public class PlaybackManager : MonoBehaviour
     
     private int _currentIndex = 0;
     private bool _isRunning = false;
+    [NonSerialized] public bool InDebugMode = true;
 
     private void Awake()
     {
@@ -35,6 +37,27 @@ public class PlaybackManager : MonoBehaviour
     
     private void Update()
     {
+        //Input
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            if (InDebugMode)
+            {
+                GridPositionsVisualizeSystem.Instance.HideAllGridPositions();
+            }
+            else
+            {
+                GridPositionsVisualizeSystem.Instance.ShowAllGridPositions();
+            }
+
+            InDebugMode = !InDebugMode;
+        }
+        
+        
         if(!_isRunning) return;
         HandleSimulation();
     }
@@ -119,14 +142,12 @@ public class PlaybackManager : MonoBehaviour
         _currentIndex--;
     }
 
-    [ContextMenu("StartSimulation")]
     public void TryStartSimulationPython()
     {
         if(_isRunning) return;
         StartCoroutine(StartSimulationPython());
     }
 
-    [ContextMenu("TogglePlay")]
     public void ToggleSimulation()
     {
         if (_isRunning)
@@ -141,33 +162,63 @@ public class PlaybackManager : MonoBehaviour
         }
     }
 
-    [ContextMenu("Reverse Time")]
-    public void ToggleTimeScaleSign()
+    private void ToggleTimeScaleSign()
     {
         if (!IsPositiveTimeScale)
         {
             IsPositiveTimeScale = true;
-            //_currentIndex++;
             PlayNextStep();
         }
         else
         {
             IsPositiveTimeScale = false;
-            //_currentIndex--;
             PlayPreviousStep();
         }
-        //?.Invoke();
     }
     
-    [ContextMenu("TEMP -- INCREASE SPEED")]
     public void IncreasePlayBackSeed()
     {
-        ChangePlaybackSpeed(2.0f);
+        //Turn it to positive time scale
+        if (SimulationTimeScale == 1.0f && !IsPositiveTimeScale)
+        {
+            ToggleTimeScaleSign();
+        }
+        else
+        {
+            if (IsPositiveTimeScale)
+            {
+                ChangePlaybackSpeed(SimulationTimeScale + 0.5f);
+            }
+            else
+            {
+                ChangePlaybackSpeed(SimulationTimeScale - 0.5f);
+            }
+        }
+    }
+    
+    public void DecreasePlayBackSeed()
+    {
+        //Turn it to positive time scale
+        if (SimulationTimeScale == 1.0f && IsPositiveTimeScale)
+        {
+            ToggleTimeScaleSign();
+        }
+        else
+        {
+            if (IsPositiveTimeScale)
+            {
+                ChangePlaybackSpeed(SimulationTimeScale - 0.5f);
+            }
+            else
+            {
+                ChangePlaybackSpeed(SimulationTimeScale + 0.5f);
+            }
+        }
     }
 
     public void ChangePlaybackSpeed(float newSpeed)
     {
-        SimulationTimeScale = newSpeed;
+        SimulationTimeScale = Mathf.Clamp(newSpeed,1.0f,2.5f);
     }
     
     private IEnumerator StartSimulationPython()

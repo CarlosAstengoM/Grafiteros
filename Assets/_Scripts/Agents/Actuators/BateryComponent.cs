@@ -12,7 +12,6 @@ public class BateryComponent : BaseActuator
     private void Start()
     {
         _currentCharge = _maxCharge;
-        PlaybackManager.Instance.OnReverseToggled += SelectChargeMethod;
     }
 
     private void OnEnable()
@@ -25,7 +24,6 @@ public class BateryComponent : BaseActuator
     {
         Agents agent = GetComponent<Agents>();
         agent.OnActionStarted -= CalculateChargeUsage;
-        PlaybackManager.Instance.OnReverseToggled -= SelectChargeMethod;
     }
 
     public override void ExecuteAction(GridPosition from, GridPosition to)
