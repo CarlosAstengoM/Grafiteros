@@ -20,6 +20,7 @@ public class Agents : MonoBehaviour
         LevelGrid.Instance.SetUnitAtGridPosition(_gridPosition, this);
         transform.position = LevelGrid.Instance.GetWorldPosition(_gridPosition);
     }
+    
     public void ExecuteStep(AgentAction agentAction)
     {
         OnActionStarted?.Invoke(agentAction.type);

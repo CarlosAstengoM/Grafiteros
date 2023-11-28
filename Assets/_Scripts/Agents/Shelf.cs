@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 public class Shelf : MonoBehaviour
 {
-    [SerializeField] private GameObject boxPosition;
+    [SerializeField] public GameObject boxPosition;
     private GameObject stored;
     
     void Start()
