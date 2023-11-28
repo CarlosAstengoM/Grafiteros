@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3457458941341693412}
   - component: {fileID: 2226485893240503670}
   - component: {fileID: 7633141276640641280}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6618391412692084092}
   - component: {fileID: 2844671749131885542}
-  m_Layer: 0
+  - component: {fileID: 9034614094561730697}
+  m_Layer: 7
   m_Name: Shelf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,12 +133,25 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1.1452818, z: 1}
   m_Center: {x: 0, y: 0.68683994, z: 0}
+--- !u!114 &9034614094561730697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5219570996876925689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b026fde95ed0c3f42beb1de991295bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boxPosition: {fileID: 6064361778856713750}
 --- !u!1 &6064361778856713750
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,7 +163,7 @@ GameObject:
   - component: {fileID: 8373708573680370694}
   - component: {fileID: 7593214129114526289}
   - component: {fileID: 5345731720699026266}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

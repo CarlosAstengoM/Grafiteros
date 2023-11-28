@@ -37,7 +37,15 @@ public class LevelGrid : MonoBehaviour
     public Agents GetUnitAtGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
-        return gridObject.GetUnit();
+        var x = gridObject.GetUnit();
+        if (x != null)
+        {
+            return x;
+        }
+        else
+        {
+            return gridObject.GetBox();
+        }
     }
 
     public void ClearUnitAtGridPosition(GridPosition gridPosition)
@@ -45,11 +53,35 @@ public class LevelGrid : MonoBehaviour
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
         gridObject.SetUnit(null);
     }
+    
+    public void SetBoxAtGridPosition(GridPosition gridPosition, Agents agents)
+    {
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        gridObject.SetBox(agents);
+    }
+    
+    public Agents GetBoxAtGridPosition(GridPosition gridPosition)
+    {
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetBox();
+    }
+    
+    public void ClearBoxAtGridPosition(GridPosition gridPosition)
+    {
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        gridObject.SetBox(null);
+    }
 
     public void UpdateUnitGridPosition(Agents agents, GridPosition previousPosition, GridPosition newPosition)
     {
         ClearUnitAtGridPosition(previousPosition);
         SetUnitAtGridPosition(newPosition,agents);
+    }
+    
+    public void UpdateBoxGridPosition(Agents agents, GridPosition previousPosition, GridPosition newPosition)
+    {
+        ClearBoxAtGridPosition(previousPosition);
+        SetBoxAtGridPosition(newPosition,agents);
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition) => _gridSystem.GetGridPosition(worldPosition);

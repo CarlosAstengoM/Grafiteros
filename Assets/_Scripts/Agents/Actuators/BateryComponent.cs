@@ -38,11 +38,6 @@ public class BateryComponent : BaseActuator
         UseCharge(SimulationParameters.Instance.ChargeUpAmount);
     }
 
-    public override void OnActionReversed()
-    {
-        UseCharge(SimulationParameters.Instance.ChargeUpAmount);
-    }
-
     private void CalculateChargeUsage(ActionType actionType)
     {
         int amount = 0;

@@ -6,7 +6,7 @@ public class Agents : MonoBehaviour
 {
     public Action<ActionType> OnActionStarted;
     
-    public GridPosition _gridPosition { get; private set; }
+    public GridPosition _gridPosition { get; protected set; }
     private PlaybackComponent _playbackComponent;
 
     private void Awake()
@@ -14,23 +14,12 @@ public class Agents : MonoBehaviour
         _playbackComponent = GetComponent<PlaybackComponent>();
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         _gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.SetUnitAtGridPosition(_gridPosition, this);
         transform.position = LevelGrid.Instance.GetWorldPosition(_gridPosition);
     }
-
-    private void Update()
-    {
-        GridPosition currentGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-        if(_gridPosition != currentGridPosition)
-        {
-            LevelGrid.Instance.UpdateUnitGridPosition(this,_gridPosition,currentGridPosition);
-            _gridPosition = currentGridPosition;
-        }
-    }
-
     public void ExecuteStep(AgentAction agentAction)
     {
         OnActionStarted?.Invoke(agentAction.type);

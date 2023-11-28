@@ -32,19 +32,6 @@ public class PlaybackManager : MonoBehaviour
         }
         Instance = this;
     }
-
-    private void Start()
-    {
-        /*
-        for (int i = 1; i < LevelGrid.Instance.GetWidth(); i++)
-        {
-            List<AgentAction> a = new List<AgentAction>();
-            a.Add(new AgentAction(new GridPosition(0,i-1),new GridPosition(0,i),ActionType.Move));
-            SimulationStep x = new SimulationStep(a);
-            _stepList.Add(x);
-        }
-        */
-    }
     
     private void Update()
     {
@@ -76,14 +63,29 @@ public class PlaybackManager : MonoBehaviour
 
         foreach (AgentAction action in actions)
         {
+            // Spawn box
             if (action.type == ActionType.SPAWN)
             {
                 Instantiate(SimulationParameters.Instance.BoxPrefab, LevelGrid.Instance.GetWorldPosition(action.from), Quaternion.identity);
                 continue;
             }
+            
             Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.from);
             agent.ExecuteStep(action);
         }
+        
+        foreach (AgentAction action in actions)
+        {
+            // Ignore spawned box
+            if (action.type == ActionType.SPAWN)
+            {
+                continue;
+            }
+            
+            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.from);
+            agent.GetComponent<MoveComponent>().UpdatePositionInGrid(action.from,action.to);
+        }
+        
         _currentIndex++;
     }
     
@@ -93,8 +95,26 @@ public class PlaybackManager : MonoBehaviour
 
         foreach (AgentAction action in actions)
         {
+            // Spawn box
+            if (action.type == ActionType.SPAWN)
+            {
+                Destroy(LevelGrid.Instance.GetUnitAtGridPosition(action.from).gameObject);
+                continue;
+            }
+            
             Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.to);
             agent.ExecuteStep(action);
+        }
+        foreach (AgentAction action in actions)
+        {
+            // Ignore spawned box
+            if (action.type == ActionType.SPAWN)
+            {
+                continue;
+            }
+            
+            Agents agent = LevelGrid.Instance.GetUnitAtGridPosition(action.to);
+            agent.GetComponent<MoveComponent>().UpdatePositionInGrid(action.to,action.from);
         }
         _currentIndex--;
     }

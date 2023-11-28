@@ -122,6 +122,7 @@ GameObject:
   - component: {fileID: 406257705426698845}
   - component: {fileID: 8697878743153598362}
   - component: {fileID: 5920241185760278768}
+  - component: {fileID: 122869209103208295}
   m_Layer: 0
   m_Name: E80-Agent
   m_TagString: Untagged
@@ -195,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 785e880d602df2d479736c536fb6c914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxVisual: {fileID: 2671119475144132239}
+  _boxHolder: {fileID: 122869209103208295}
 --- !u!114 &2149285521122466407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,7 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1700c4280bb8b489df4aba900e068c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxVisual: {fileID: 2671119475144132239}
+  _boxHolder: {fileID: 122869209103208295}
 --- !u!114 &406257705426698845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,8 +269,25 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.2000407, y: 0.5461686, z: 1.4732826}
-  m_Center: {x: 0.013181269, y: 0.32625148, z: 0.025102735}
+  m_Size: {x: 1.2000407, y: 0.6075514, z: 1.4732826}
+  m_Center: {x: 0.013181269, y: 0.2955601, z: 0.025102735}
+--- !u!114 &122869209103208295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4474864525037895794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bb3f09324efb4347a2c74f13771569b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShelfLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  BoxPositionHolder: {fileID: 4251715002431779667}
+  StoredBox: {fileID: 0}
 --- !u!1001 &290759229723051062
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -286,12 +304,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: abf7c65ca991405469569791d3922d9d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.073
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: abf7c65ca991405469569791d3922d9d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.004985571
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: abf7c65ca991405469569791d3922d9d,
         type: 3}
