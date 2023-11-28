@@ -147,14 +147,16 @@ public class PlaybackManager : MonoBehaviour
         if (!IsPositiveTimeScale)
         {
             IsPositiveTimeScale = true;
-            _currentIndex++;
+            //_currentIndex++;
+            PlayNextStep();
         }
         else
         {
             IsPositiveTimeScale = false;
-            _currentIndex--;
+            //_currentIndex--;
+            PlayPreviousStep();
         }
-        OnReverseToggled?.Invoke();
+        //?.Invoke();
     }
     
     [ContextMenu("TEMP -- INCREASE SPEED")]

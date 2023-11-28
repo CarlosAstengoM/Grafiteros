@@ -45,4 +45,10 @@ public class MoveComponent : BaseActuator
         _from = LevelGrid.Instance.GetWorldPosition(to);
         _to = LevelGrid.Instance.GetWorldPosition(from);
     }
+
+    public void PreventMovement()
+    {
+        _from = transform.position;
+        _to = transform.position;
+    }
 }

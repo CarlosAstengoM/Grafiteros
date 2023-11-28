@@ -23,7 +23,6 @@ public class Box_MoveComponent : MoveComponent
         {
             Shelf shelf = raycastHit.transform.GetComponent<Shelf>();
             shelf.TakeBox(gameObject,false);
-            _to = shelf.boxPosition.transform.position;
         }
         base.ExecuteAction(from, to);
     }

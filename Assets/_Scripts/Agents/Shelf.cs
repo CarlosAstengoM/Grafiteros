@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 public class Shelf : MonoBehaviour
 {
-    [SerializeField] public GameObject boxPosition;
+    [SerializeField] public Transform boxPosition;
     private GameObject stored;
     
     void Start()
@@ -21,7 +21,7 @@ public class Shelf : MonoBehaviour
         box.transform.parent = null;
         if (updatePosition)
         {
-            Vector3 position = boxPosition.transform.position;
+            Vector3 position = boxPosition.position;
             stored.transform.position = new Vector3(position.x,0,position.z);
         }
     }
